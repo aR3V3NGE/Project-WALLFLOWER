@@ -1,1 +1,14 @@
+Time log:
+  1 hour spent learning about neural networks and the math behind them
+  2 hours following a tutorial on a simple neural network to recognize handwritten numbers
+  1.5 hours looking at moonboard at Onsight Rock Gym and how they decide routes and grades
+  30 minutes: discussed challenge 7 and distribution of work between group members
 
+Rubric for project:
+  10 points: Neural Network completed in a timely manor for bug fixing and integration with the I/O made by other group memebers
+  5 points: documentation/good-formatting/comments
+  15 points: code works as intended with at least a 70% accuracy
+  10 points: Djikstra's algorithm working well with path finding
+
+Report for challenge 7:
+  The group work went well. We were able to discuss our plans for the future of the project. It was fun to see how we could use Djikstra's to create a climbable route given a picture. Our idea is to run it multiple times but with less nodes each time. I think it will work well.
