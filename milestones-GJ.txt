@@ -1,1 +1,18 @@
+RUBRIC:
 
++20 Help to develop Dijkstra's program for graph with weights based on route difficulty
++10 Output methodology and realistic testing
++5 Familiarization and assistance with tensor flow
++5 Writeup and Commenting
+
+TIME LOG:
+1 Hour - Scoping climbing walls at different angles and determining logistics for hold selection
+2 Hours - Researching Neural Networks and how to develop them
+1 Hour - Determining implementation methodology
+1 Hour - Learning/Researching Dijkstra's
+30 Minutes - Challenge 7 Discussion
+
+SHORT REPORT:
+We came together on Discord to re-establish a ground for the project, and further discuss logistics and implementation tactics.
+The coding aspect seems to be a bit complicated, and I still need to finish Project 4 to get a full grip on Dijkstra's.
+Overall this challenge was fine, just a benchmark on where we stand idea-wise and what the plan will be going forward.
