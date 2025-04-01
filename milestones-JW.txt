@@ -1,1 +1,12 @@
-
+-------------------------
+RUBRIC FOR FINAL PROJECT:
+10 Points - Program can identify what different holds are. (Slopers, Pockets, Jugs, etc.)
+15 Points - Program can execute and output a result within a reasonable amount of time.
+15 Points - Program can correctly identify the difficulty of given routes in an image of a rock wall with various holds.
+-------------------------
+TIME LOG:
+3.5 HOURS -  Watched video that went in-depth on Neural Networks and just helped me understand the basics of what I would be working with for this project. I plan to watch more videos on this topic to further educate myself. (https://www.youtube.com/watch?v=ob1yS9g-Zcs)
+2 HOURS - Took some of Google's crash courses in Machine Learning & Neural Networks. I did not complete the entirety of the courses that I would like to, but will finish those in the coming days and then begin coding for the project. (https://developers.google.com/machine-learning)
+-------------------------
+SHORT REPORT:
+This stage of the project was a lot of research before we begin coding, as this was a new topic, at least for me. This challenge helped me keep myself accountable for learning about neural networks and ML so I can help with the project.
