@@ -1,1 +1,21 @@
+Time log:
+  1.5 hours: looking at moonboard at Onsight Rock Gym and how they decide routes and grades
+  1 hour: looking at routes set at the vol wall and how the proximity of holds affected grade
+  1 hour: reading about tensor flow and turtle.py and watching videos on the same
+      Example of video watched: https://www.youtube.com/watch?v=w8yWXqWQYmU
+  30 minutes: discussed challenge 7 and what we needed to do for deliverables
+  1 hour: learning and doing Djikstra's as it will be useful for the lab
 
+Rubric for project:
+  5 points: timeliness
+    Code done in timely manner
+  5 points: communication with teammates
+    Ask for help and inform teammates of progress
+  15 points: code works
+    Written code works as intended with no bugs
+  10 points: documentation and well written-ness of code
+    Code is well documented with appropriate variable and function names
+
+Report for challenge 7:
+  The group convened to help decide roles for the project and get a better understanding of climbing routes. 
+  I learned about neural networks and turtle.py. The challenge helped the group get an idea of where we are on the project in general.
