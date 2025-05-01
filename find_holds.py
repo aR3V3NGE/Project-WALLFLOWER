@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+#import subprocess
 
 #finds the holds in the given image
 def detect_holds(image_path):
@@ -90,7 +91,6 @@ def color_check(holds, image_path):
 def user_input(holds):
     return holds
 
-
 #test to see if saturating the image gives better output
 def detect_saturated_holds(image_path):
     
@@ -144,6 +144,14 @@ def detect_saturated_holds(image_path):
     
     return holds
 
+#output
+'''
+def output(image_path, stdout):
+    image = cv2.imread(image_path)
+    for hold in holds:
+        cv2.rectangle(image, (x, y), (x + w, y + h), (255, 0, 0), 2)
+'''
+
 image_path = r"C:\Users\fived\Downloads\Kilterboard-7x10-full-ride.jpg"
 
 holds = detect_holds(image_path)
@@ -156,3 +164,9 @@ holds = detect_holds(image_path)
 with open("holds_list", "w") as file:
     for hold in holds:
         file.write(str(hold) + "\n")
+
+#process = subprocess.Popen('./my_program', stdout=subprocess.PIPE, stderr=subprocess.PIPE) 
+#stdout, stderr = process.communicate()
+
+#with output update the holds list
+#output(image_path, holds)
