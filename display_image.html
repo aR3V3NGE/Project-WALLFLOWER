@@ -1,0 +1,8 @@
+<html>
+   <body>
+      <h1>Your Set Wall:</h1>
+      <img src="{{ url_for('uploaded_file', filename=filename) }}" style="display: none;">
+      <img src="{{ url_for('uploaded_file', filename='holds_output.jpg') }}" alt="Uploaded Image">
+      <h1>{{ difficulty }} Route</h1>
+   </body>
+</html>
