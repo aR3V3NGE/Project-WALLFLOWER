@@ -5,160 +5,154 @@
 #include <utility>
 #include <vector>
 #include <cmath>
+#include <fstream>
 
 using namespace std;
 
 struct Node {
-	
-	int weight;
 
-	int currRow;
-	int currCol;
+        int weight;
 
-	int prevRow;
-	int prevCol;
+        int currRow;
+        int currCol;
+
+        int prevRow;
+        int prevCol;
 };
 
 void dijkstrater(vector<vector<int>> graph, vector<vector<int>> &route, const int &holds, int startRow, int startCol, int endRow, int endCol) {
 
-	vector<vector<bool>> visited(rows, vector<bool>(cols, false)); 
-	vector<vector<int>> dist(rows, vector<int>(cols, INT_MAX));
+        vector<vector<bool>> visited(holds, vector<bool>(holds, false));
+        vector<vector<int>> dist(holds, vector<int>(holds, INT_MAX));
+        vector<vector<pair<int, int>>> prev(holds, vector<pair<int, int>>(holds, make_pair(-1, -1))); // For path reconstruction
+        multimap<int, Node> frontier; //stores nodes to be looped through, sorted by weight
 
-	// For path reconstruction
-	vector<vector<pair<int, int>>> prev(rows, vector<pair<int, int>>(cols, make_pair(-1, -1))); 
+        Node start;
 
-	multimap<int, Node> frontier; //stores nodes to be looped through, sorted by weight
+        dist[startRow][startCol] = 0;
+        start.weight = 0;
+        start.currRow = startRow;
+        start.currCol = startCol;
+        start.prevRow = -1;
+        start.prevCol = -1;
 
-	dist[startRow][startCol] = 0;
+        frontier.insert(make_pair(0, start));
 
-	start.distance = 0;
-	start.currRow = startRow;
-	start.currCol = startCol;
-	start.prevRow = -1;
-	start.prevCol = -1;
+        int dirRow[4] = {-1, 1, 0, 0};
+        int dirCol[4] = {0, 0, -1, 1};
+        //add diagonal implementation
 
-	frontier.insert(make_pair(0, start));
+        while (!frontier.empty()) { //Loops until there are no more nodes to loop trough
 
-	int dirRow[4] = {-1, 1, 0, 0};
-	int dirCol[4] = {0, 0, -1, 1};
+                multimap<int, Node>::iterator it = frontier.begin();
 
-	while (!frontier.empty()) { //Loops until there are no more nodes to loop trough
+                Node current = it->second;
 
-		multimap<int, Node>::iterator it = frontier.begin();
+                if (visited[current.currRow][current.currCol]) {
+                        frontier.erase(it);
+                        continue;
+                }
 
-		Node current = it->second;
+                visited[current.currRow][current.currCol] = true;
+                frontier.erase(it);
 
-		if (visited[current.currRow][current.currCol]) {
-			frontier.erase(it);
-			continue;
-		}
+                if ((current.currRow == endRow) && (current.currCol == endCol)) break;
 
-		visited[current.currRow][current.currCol] = true;
-		frontier.erase(it);
+                for (int i = 0; i < 4; i++) { //Explores all 4 potential paths (up, down, left, right)
 
-		if ((current.currRow == endRow) && (current.currCol == endCol)) break;
+                        if (current.currRow + dirRow[i] < 0 ||
+                                        current.currRow + dirRow[i] >= holds ||
+                                        current.currCol + dirCol[i] < 0 ||
+                                        current.currCol + dirCol[i] >= holds) {
 
-		for (int i = 0; i < 4; i++) { //Explores all 4 potential paths (up, down, left, right) 
+                                continue;
+                        }
 
-			if (current.currRow + dirRow[i] < 0 ||
-					current.currRow + dirRow[i] >= rows ||
-					current.currCol + dirCol[i] < 0 ||
-					current.currCol + dirCol[i] >= cols) {
+                        if (visited[current.currRow + dirRow[i]][current.currCol + dirCol[i]]) continue;
 
-				continue;
-			}
+                        int edgeCost = graph[current.currRow][current.currCol];
+                        int betterDistance = current.weight + edgeCost;
 
-			if (visited[current.currRow + dirRow[i]][current.currCol + dirCol[i]]) continue;
+                        if (betterDistance <
+                                        dist[current.currRow + dirRow[i]][current.currCol + dirCol[i]]) {
 
-			int edgeCost = ;
-			int betterDistance = current.distance + edgeCost;
+                                dist[current.currRow + dirRow[i]][current.currCol + dirCol[i]] =
+                                        betterDistance;
 
-			if (betterDistance <
-					dist[current.currRow + dirRow[i]][current.currCol + dirCol[i]]) {
+                                prev[current.currRow + dirRow[i]][current.currCol + dirCol[i]] =
+                                        make_pair(current.currRow, current.currCol);
 
-				dist[current.currRow + dirRow[i]][current.currCol + dirCol[i]] =
-					betterDistance;
+                                Node neighbor;
 
-				prev[current.currRow + dirRow[i]][current.currCol + dirCol[i]] =
-					make_pair(current.currRow, current.currCol);
+                                neighbor.weight = betterDistance;
 
-				Node neighbor;
+                                neighbor.currRow = current.currRow + dirRow[i];
+                                neighbor.currCol = current.currCol + dirCol[i];
 
-				neighbor.distance = betterDistance;
+                                neighbor.prevRow = current.currRow;
+                                neighbor.prevCol = current.currCol;
 
-				neighbor.currRow = current.currRow + dirRow[i];
-				neighbor.currCol = current.currCol + dirCol[i];
+                                frontier.insert(make_pair(neighbor.weight, neighbor));
+                        }
+                }
+        }
 
-				neighbor.prevRow = current.currRow;
-				neighbor.prevCol = current.currCol;
+        vector<pair<int, int>> thePath; //Making the path after dijkstrating
 
-				frontier.insert(make_pair(neighbor.distance, neighbor));
-			}
-		}
-	}
+        int tempEndRow = endRow;
+        int tempEndCol = endCol;
 
-	//Making the path after dijkstrating
-	vector<pair<int, int>> thePath;
+        while (!(tempEndRow == -1 && tempEndCol == -1)) {
 
-	int tempEndRow = endRow;
-	int tempEndCol = endCol;
+                thePath.push_back(make_pair(tempEndRow, tempEndCol));
 
-	while (!(tempEndRow == -1 && tempEndCol == -1)) {
+                pair<int, int> prevPair = prev[tempEndRow][tempEndCol];
 
-		thePath.push_back(make_pair(tempEndRow, tempEndCol));
+                tempEndRow = prevPair.first;
+                tempEndCol = prevPair.second;
+        }
 
-		pair<int, int> prevPair = prev[tempEndRow][tempEndCol];
-
-		tempEndRow = prevPair.first;
-		tempEndCol = prevPair.second;
-	}
-
-	//Reversing the path as it gets made backwards, then output
-	reverse(thePath.begin(), thePath.end());
-
-	cout << dist[endRow][endCol] << endl;
-
-	for (size_t i = 0; i < thePath.size(); i++) {
-
-		cout << thePath[i].first << " " << thePath[i].second << endl;
-	}
+        //Reversing the path as it gets made backwards, then output
+        reverse(thePath.begin(), thePath.end());
+        cout << dist[endRow][endCol] << endl;
+        for (size_t i = 0; i < thePath.size(); i++) cout << thePath[i].first << " " << thePath[i].second << endl;
 
 }
 
 double distanciator(const map<int, map<int, double[3]>>::iterator &it, const map<int, map<int, double[3]>>::iterator &itr) {
-	//finds distance from midpoint to midpoint of each hold
-	double y1 = it->second->first + it->second->second[0]/2; 
-	double y2 = itr->second->first + itr->second->second[0]/2;
+        //finds distance from midpoint to midpoint of each hold
+        double y1 = it->second->first + it->second->second[0]/2;
+        double y2 = itr->second->first + itr->second->second[0]/2;
 
-	double x1 = it->first - it->second->second[1]/2;
-	double x2 = itr->first - itr->second->second[1]/2;
+        double x1 = it->first - it->second->second[1]/2;
+        double x2 = itr->first - itr->second->second[1]/2;
 
-	double y = pow(y1 + y2, 2);
-	double x = pow(x1 + x2, 2);
+        double y = pow(y1 + y2, 2);
+        double x = pow(x1 + x2, 2);
 
-	return sqrt(y+x);
+        return sqrt(y+x);
 }
 
 vector<vector<int>> graphify(const map<int, map<int, double[3]>> &wall, int &holds) {
 
-	vector<vector<int>> graph (holds, vector<int>(holds));
+        vector<vector<int>> graph (holds, vector<int>(holds));
 
-	int i = 0;
-	for (map<int, map<int, double[3]>>::iterator it = wall.begin(); it != wall.end(); it++) {
-		int j = 0;
-		for (map<int, map<int, double[3]>>::iterator itr = wall.begin(); itr != wall.end(); itr++) {
-			if (it == itr) graph[i][j] = 0;
-			else {
-				double distance = distanciator(it, itr);
-				double area = 10 / itr->second->second[2]; 
-				graph[i][j] = distance + area;
-			}
-			j++;
-		}
-		i++;
-	}
+        int i = 0;
+        for (map<int, map<int, double[3]>>::iterator it = wall.begin(); it != wall.end(); it++) {
+                int j = 0;
+                for (map<int, map<int, double[3]>>::iterator itr = wall.begin(); itr != wall.end(); itr++) {
+                        if (it == itr) graph[i][j] = 0;
+                        else {
+                                double distance = distanciator(it, itr);
+                                double area = 10 / itr->second->second[2];
+                                graph[i][j] = distance + area;
+                        }
+                        j++;
+                }
+                i++;
+        }
 
-	return graph;
+        return graph;
 }
 
 void unscrew(vector<vector<int>> &graph, const vector<vector<int>> route, int &holds) {
@@ -168,33 +162,33 @@ void unscrew(vector<vector<int>> &graph, const vector<vector<int>> route, int &h
 
 int main(int argc, char* argv[]) {
 
-	ifstream fin;
-	fin.open(argv[1]);
+        ifstream fin;
+        fin.open(argv[1]);
 
-	map<int, map<int, double[3]>> wall;
-	int vGrade, holds;
-	fin >> vGrade;
+        map<int, map<int, double[3]>> wall;
+        int vGrade, holds;
+        fin >> vGrade;
 
-	while (fin) {
+        while (fin) {
 
-		int x, y, h, w, a;
-		fin >> x >> y >> h >> w >> a;
-		wall[x][y] = {h, w, a};
-		holds++;
+                int x, y, h, w, a;
+                fin >> x >> y >> h >> w >> a;
+                wall[x][y] = {h, w, a};
+                holds++;
 
-	}
+        }
 
-	fin.close();
+        fin.close();
 
-	vector<vector<int>> graph = graphify(wall, holds);
+        vector<vector<int>> graph = graphify(wall, holds);
 
-	while(graph.size() > 2) {
+        while(graph.size() > 2) {
 
-		vector<vector<int>> route;
-		dijkstrater(graph, route, holds); //runs dijkstra to get routes
-		unscrew(graph, route, holds); //removes holds
+                vector<vector<int>> route;
+                dijkstrater(graph, route, holds, startRow, startCol, endRow, endCol); //runs dijkstra to get routes
+                unscrew(graph, route, holds); //removes holds
 
-	}
-	
-	return 0;
+        }
+
+        return 0;
 }
