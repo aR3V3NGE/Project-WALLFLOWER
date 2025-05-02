@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-#import subprocess
+import subprocess
 
 #finds the holds in the given image
 def detect_holds(image_path):
@@ -19,9 +19,15 @@ def detect_holds(image_path):
     holds = []
     for contour in contours:
         area = cv2.contourArea(contour)
-        if 40 < area:
+        if 35 < area:
             x, y, w, h = cv2.boundingRect(contour)
-            holds.append({"x": x, "y": y, "w": w, "h": h, "area": area})
+            line = ""
+            line += (str)(x)
+            line += " " + (str)(y)
+            line += " " + (str)(w)
+            line += " " + (str)(h)
+            line += " " + (str)(area)
+            holds.append(line)
             
             #draws box on the image
             cv2.rectangle(image, (x, y), (x + w, y + h), (255, 0, 0), 2)
@@ -34,62 +40,7 @@ def detect_holds(image_path):
     return holds
 
 #averages color and makes sure it is within the normal color ranges of climbing holds
-def color_check(holds, image_path):
-    
-    #load image and blur it
-    image = cv2.imread(image_path)
-    hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-
-    saturation_factor = 2  # Adjust this value to control the saturation increase
-    hsv_image[..., 1] = np.clip(hsv_image[..., 1] * saturation_factor, 0, 255)
-
-    saturated_image = cv2.cvtColor(hsv_image, cv2.COLOR_HSV2BGR)
-    
-    '''
-    for n in range(len(holds)):
-
-        blurred = cv2.GaussianBlur(image, (11, 11), 0)
-
-        x = holds[n]["x"]
-        y = holds[n]["y"]
-        w = holds[n]["w"]
-        h = holds[n]["h"]
-
-        cv2.rectangle(blurred, (x, y), (x + w, y + h), (255, 0, 0), 2)
-
-        average_cpr = cv2.mean(blurred[y:y+h, x:x+w])
-        print("Average BGR: " + (str)(average_cpr))
-
-        cv2.imshow("Blurred", blurred)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
-
-    return holds
-'''
-
-    blurred = cv2.GaussianBlur(saturated_image, (11, 11), 0)
-
-    n = 3
-
-    x = holds[n]["x"]
-    y = holds[n]["y"]
-    w = holds[n]["w"]
-    h = holds[n]["h"]
-
-    cv2.rectangle(blurred, (x, y), (x + w, y + h), (255, 0, 0), 2)
-
-    average_cpr = cv2.mean(blurred[y:y+h, x:x+w])
-    print("Average BGR: " + (str)(average_cpr))
-
-    cv2.imshow("Blurred", blurred)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-
-    return holds
-    
-#allows user to add and remove holds given the output of detect_holds
-def user_input(holds):
-    return holds
+#def color_check(holds, image_path):
 
 #test to see if saturating the image gives better output
 def detect_saturated_holds(image_path):
@@ -144,29 +95,58 @@ def detect_saturated_holds(image_path):
     
     return holds
 
+#write holds to file for route maker file
+def write(holds):
+    with open("holds_list", "w") as file:
+        for hold in holds:
+            file.write(str(hold) + "\n")
+
+#dikjstrater
+def dikjstrater(holds):
+    process = subprocess.Popen(['holds.exe', 'holds_list'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout, stderr = process.communicate()
+    return list(map(int, stdout.decode().strip().split()))
+
 #output
-'''
 def output(image_path, stdout):
     image = cv2.imread(image_path)
-    for hold in holds:
-        cv2.rectangle(image, (x, y), (x + w, y + h), (255, 0, 0), 2)
-'''
 
-image_path = r"C:\Users\fived\Downloads\Kilterboard-7x10-full-ride.jpg"
+    #draw start
+    x, y, w, h = numbers[0:4]
+    top_left = (x, y)
+    bottom_right = (x + w, y + h)
+    cv2.rectangle(image, top_left, bottom_right, color=(0, 255, 0), thickness=2)
+
+    #draw finish
+    x, y, w, h = numbers[len(numbers) - 4:len(numbers)]
+    top_left = (x, y)
+    bottom_right = (x + w, y + h)
+    cv2.rectangle(image, top_left, bottom_right, color=(0, 0, 255), thickness=2)
+
+    #draw middle holds
+    for i in range(4, len(numbers) - 4, 4):
+        x, y, w, h = numbers[i:i+4]
+        top_left = (x, y)
+        bottom_right = (x + w, y + h)
+        cv2.rectangle(image, top_left, bottom_right, color=(255, 0, 0), thickness=2)
+
+    cv2.imshow("Image with Boxes", image)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+image_path = r"C:\Users\Drew\Desktop\Projects\CS302 Final\kilter.jpg"
 
 holds = detect_holds(image_path)
-#testing if saturated holds is better
+
 #holds = detect_saturated_holds(image_path)
 
 #color_check(holds, image_path)
 #holds = user_input(holds)
 
-with open("holds_list", "w") as file:
-    for hold in holds:
-        file.write(str(hold) + "\n")
+#writes to file
+write(holds)
 
-#process = subprocess.Popen('./my_program', stdout=subprocess.PIPE, stderr=subprocess.PIPE) 
-#stdout, stderr = process.communicate()
+#call route maker
+numbers = dikjstrater(holds)
 
-#with output update the holds list
-#output(image_path, holds)
+output(image_path, numbers) 
