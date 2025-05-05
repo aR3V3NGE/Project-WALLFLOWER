@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import subprocess
+import os
 
 #finds the holds in the given image
 def detect_holds(image_path):
@@ -30,13 +31,13 @@ def detect_holds(image_path):
             holds.append(line)
             
             #draws box on the image
-            cv2.rectangle(image, (x, y), (x + w, y + h), (255, 0, 0), 2)
-    
+            #cv2.rectangle(image, (x, y), (x + w, y + h), (255, 0, 0), 2)
+    '''
     #output
     cv2.imshow("Detected Holds", image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-    
+    '''
     return holds
 
 #averages color and makes sure it is within the normal color ranges of climbing holds
@@ -86,13 +87,13 @@ def detect_saturated_holds(image_path):
             holds.append(line)
             
             #draws box on the image
-            cv2.rectangle(image, (x, y), (x + w, y + h), (255, 0, 0), 2)
-    
+            #cv2.rectangle(image, (x, y), (x + w, y + h), (255, 0, 0), 2)
+    '''
     #output
     cv2.imshow("Detected Holds", image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-    
+    '''
     return holds
 
 #write holds to file for route maker file
@@ -108,7 +109,7 @@ def dikjstrater(holds):
     return list(map(int, stdout.decode().strip().split()))
 
 #output
-def output(image_path, stdout):
+def output(image_path, numbers):
     image = cv2.imread(image_path)
 
     #draw start
@@ -130,23 +131,28 @@ def output(image_path, stdout):
         bottom_right = (x + w, y + h)
         cv2.rectangle(image, top_left, bottom_right, color=(255, 0, 0), thickness=2)
 
+    output_path = os.path.join("static/uploads", "holds_output.jpg")
+    cv2.imwrite(output_path, image)
+
+    '''
     cv2.imshow("Image with Boxes", image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
+    '''
 
-image_path = r"C:\Users\Drew\Desktop\Projects\CS302 Final\kilter.jpg"
+def main_function(image_path, difficulty):
 
-holds = detect_holds(image_path)
+    holds = detect_holds(image_path)
 
-#holds = detect_saturated_holds(image_path)
+    #holds = detect_saturated_holds(image_path)
 
-#color_check(holds, image_path)
-#holds = user_input(holds)
+    #color_check(holds, image_path)
+    #holds = user_input(holds)
 
-#writes to file
-write(holds)
+    #writes to file
+    write(holds)
 
-#call route maker
-numbers = dikjstrater(holds)
+    #call route maker
+    numbers = dikjstrater(holds)
 
-output(image_path, numbers) 
+    output(image_path, numbers)
