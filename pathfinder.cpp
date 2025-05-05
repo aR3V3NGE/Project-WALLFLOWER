@@ -6,8 +6,15 @@
 #include <vector>
 #include <cmath>
 #include <fstream>
+#include <cstdlib>
+#include <ctime>
 
 using namespace std;
+
+struct Hold {
+
+        int h, w, a;
+};
 
 struct Node {
 
@@ -20,7 +27,22 @@ struct Node {
         int prevCol;
 };
 
-void dijkstrater(vector<vector<int>> graph, vector<vector<int>> &route, const int &holds, int startRow, int startCol, int endRow, int endCol) {
+void output(const int &weight, const vector<pair<int, int>> &route, const map<pair<int, int>, Hold>  &wall, const int &grade) {
+
+        if (grade*100 <= weight <= grade*100+100) {
+                for (size_t i = 0; i < route.size(); i++) {
+                        int x = route[i].first;
+                        int xCount = 0;
+                        for( map<pair<int, int>, Hold>::const_iterator it = wall.begin(); it != wall.end(); it++) {
+                                if (xCount == x) {
+                                        cout << it->first.first << " " << it->first.second << " " << it->second.h << " " << it->second.w << " ";
+                                }
+                }
+        }
+        }
+}
+
+void dijkstrater(vector<vector<int>> graph, vector<pair<int, int>> &route, const int &holds, int startRow, int startCol, int endRow, int endCol, int &weight) {
 
         vector<vector<bool>> visited(holds, vector<bool>(holds, false));
         vector<vector<int>> dist(holds, vector<int>(holds, INT_MAX));
@@ -97,7 +119,8 @@ void dijkstrater(vector<vector<int>> graph, vector<vector<int>> &route, const in
                 }
         }
 
-        vector<pair<int, int>> thePath; //Making the path after dijkstrating
+        //Making the path after dijkstrating
+        vector<pair<int, int>> thePath;
 
         int tempEndRow = endRow;
         int tempEndCol = endCol;
@@ -112,39 +135,39 @@ void dijkstrater(vector<vector<int>> graph, vector<vector<int>> &route, const in
                 tempEndCol = prevPair.second;
         }
 
-        //Reversing the path as it gets made backwards, then output
-        reverse(thePath.begin(), thePath.end());
-        cout << dist[endRow][endCol] << endl;
-        for (size_t i = 0; i < thePath.size(); i++) cout << thePath[i].first << " " << thePath[i].second << endl;
+
+        //Reversing the path as it gets made backwards, and passing through the weight so it can sort the route to a V grade
+        reverse(route.begin(), route.end());
+        weight = dist[endRow][endCol];
 
 }
 
-double distanciator(const map<int, map<int, double[3]>>::iterator &it, const map<int, map<int, double[3]>>::iterator &itr) {
-        //finds distance from midpoint to midpoint of each hold
-        double y1 = it->second->first + it->second->second[0]/2;
-        double y2 = itr->second->first + itr->second->second[0]/2;
+double distanciator(const map<pair<int, int>, Hold> ::const_iterator &it, const map<pair<int, int>, Hold> ::const_iterator &itr) {
 
-        double x1 = it->first - it->second->second[1]/2;
-        double x2 = itr->first - itr->second->second[1]/2;
+        double y1 = it->first.second + it->second.h;
+        double y2 = itr->first.second + itr->second.h;
 
-        double y = pow(y1 + y2, 2);
-        double x = pow(x1 + x2, 2);
+        double x1 = it->first.first - it->second.w;
+        double x2 = itr->first.first - itr->second.w;
+
+        double y = pow(y1 - y2, 2);
+        double x = pow(x1 - x2, 2);
 
         return sqrt(y+x);
 }
 
-vector<vector<int>> graphify(const map<int, map<int, double[3]>> &wall, int &holds) {
+vector<vector<int>> graphify(const map<pair<int, int>, Hold> &wall, int &holds) { //turns the input into graph of edge and node weights
 
         vector<vector<int>> graph (holds, vector<int>(holds));
 
         int i = 0;
-        for (map<int, map<int, double[3]>>::iterator it = wall.begin(); it != wall.end(); it++) {
+        for (map<pair<int, int>, Hold>::const_iterator it = wall.begin(); it != wall.end(); it++) {
                 int j = 0;
-                for (map<int, map<int, double[3]>>::iterator itr = wall.begin(); itr != wall.end(); itr++) {
+                for (map<pair<int, int>, Hold>::const_iterator itr = wall.begin(); itr != wall.end(); itr++) {
                         if (it == itr) graph[i][j] = 0;
                         else {
                                 double distance = distanciator(it, itr);
-                                double area = 10 / itr->second->second[2];
+                                double area = 10 / itr->second.a;
                                 graph[i][j] = distance + area;
                         }
                         j++;
@@ -155,17 +178,22 @@ vector<vector<int>> graphify(const map<int, map<int, double[3]>> &wall, int &hol
         return graph;
 }
 
-void unscrew(vector<vector<int>> &graph, const vector<vector<int>> route, int &holds) {
+void unscrew(vector<vector<int>> &graph, const vector<pair<int, int>> &route, int &holds) {
+
+                int x = route[holds/2].first;
+                int y = route[holds/2].second;
+                graph[x][y] = INT_MAX;
+
 
 }
-// Main Execution
 
+// Main Execution
 int main(int argc, char* argv[]) {
 
         ifstream fin;
         fin.open(argv[1]);
 
-        map<int, map<int, double[3]>> wall;
+        map<pair<int, int>, Hold> wall;
         int vGrade, holds;
         fin >> vGrade;
 
@@ -173,7 +201,9 @@ int main(int argc, char* argv[]) {
 
                 int x, y, h, w, a;
                 fin >> x >> y >> h >> w >> a;
-                wall[x][y] = {h, w, a};
+                wall[{x, y}].h = h;
+                wall[{x, y}].w = w;
+                wall[{x, y}].a = a;
                 holds++;
 
         }
@@ -181,11 +211,18 @@ int main(int argc, char* argv[]) {
         fin.close();
 
         vector<vector<int>> graph = graphify(wall, holds);
+        srand(time(0));
+        int startRow = rand() % holds + 3*holds/5 - 1;
+        int startCol = rand() % holds + 4*holds/5 - 1;
+        int endRow = rand() % holds;
+        int endCol = rand() % holds;
 
         while(graph.size() > 2) {
 
-                vector<vector<int>> route;
-                dijkstrater(graph, route, holds, startRow, startCol, endRow, endCol); //runs dijkstra to get routes
+                vector<pair<int, int>> route;
+                int weight;
+                dijkstrater(graph, route, holds, startRow, startCol, endRow, endCol, weight); //runs dijkstra to get routes
+                output(weight, route, wall, vGrade);
                 unscrew(graph, route, holds); //removes holds
 
         }
