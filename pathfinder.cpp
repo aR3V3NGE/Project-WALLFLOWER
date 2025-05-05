@@ -121,14 +121,13 @@ void dijkstrater(vector<vector<int>> graph, vector<pair<int, int>> &route, const
         }
 
         //Making the path after dijkstrating
-        vector<pair<int, int>> thePath;
 
         int tempEndRow = endRow;
         int tempEndCol = endCol;
 
         while (!(tempEndRow == -1 && tempEndCol == -1)) {
 
-                thePath.push_back(make_pair(tempEndRow, tempEndCol));
+                route.push_back(make_pair(tempEndRow, tempEndCol));
 
                 pair<int, int> prevPair = prev[tempEndRow][tempEndCol];
 
