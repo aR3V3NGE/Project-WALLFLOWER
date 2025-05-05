@@ -37,6 +37,7 @@ void output(const int &weight, const vector<pair<int, int>> &route, const map<pa
                                 if (xCount == x) {
                                         cout << it->first.first << " " << it->first.second << " " << it->second.h << " " << it->second.w << " ";
                                 }
+                                xCount++;
                 }
         }
         }
