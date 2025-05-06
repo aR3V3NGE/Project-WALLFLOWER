@@ -23,13 +23,17 @@ struct Node { //nodes for dijkstras
         int holdIndex;
 };
 
-void output(const double &weight, const vector<int> &route, const map<pair<double, double>, Hold>  &wall, const int &grade, const vector<pair<double, double>> &key) {
+bool output(const double &weight, const vector<int> &route, const map<pair<double, double>, Hold>  &wall, const int &grade, const vector<pair<double, double>> &key) {
+
         if (grade*100 <= weight && weight <= grade*200+200) {
                 for (size_t i = 0; i < route.size(); i++) {
                         map<pair<double, double>, Hold>::const_iterator it = wall.find(key[route[i]]);
-                        cout << it->first.first << " " << it->first.second << " " << it->second.h << " " << it->second.w;
+                        cerr << it->first.first << " " << it->first.second << " " << it->second.h << " " << it->second.w;
                 }
+                return true;
         }
+        return false;
+
 }
 
 void dijkstrater(vector<vector<double>> graph, vector<int> &route, const int &holds, int start, int finish, double &weight) {
@@ -162,12 +166,13 @@ int main(int argc, char* argv[]) {
         srand(time(0));
         int start = rand() % holds/5  + 4*holds/5;
         int finish = rand() % holds/5;
-        while(holds > 2) {
+        bool graded = false;
+        while(!graded) {
 
                 vector<int> route;
                 double weight = 0;
                 dijkstrater(graph, route, holds, start, finish, weight); //runs dijkstra to get routes
-                output(weight, route, wall, vGrade, key);
+                graded = output(weight, route, wall, vGrade, key);
                 unscrew(graph, route, wall, key, holds); //removes holds
 
         }
