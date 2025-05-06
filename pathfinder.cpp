@@ -10,6 +10,8 @@
 #include <ctime>
 #include <cfloat>
 
+#include <iomanip>
+
 using namespace std;
 
 struct Hold { //stores information about a given hold
@@ -23,16 +25,17 @@ struct Node { //nodes for dijkstras
 
 void output(const double &weight, const vector<int> &route, const map<pair<double, double>, Hold>  &wall, const int &grade, const vector<pair<double, double>> &key) {
 
-        cout << "output: \nweight: " << weight << endl << "path: \n";
+        cout << "weight: " << weight << endl << "path: \n";
 
-        if (grade*3000 <= weight && weight <= grade*3000+1000) {
+        if (grade*100 <= weight && weight <= grade*200+200) {
                 for (size_t i = 0; i < route.size(); i++) {
                         map<pair<double, double>, Hold>::const_iterator it = wall.find(key[route[i]]);
 
-                        cout << it->first.first << " " << it->first.second << " " << it->second.h << " " << it->second.w << " " << endl;
+                        cout << "\t" << it->first.first << " " << it->first.second << " " << it->second.h << " " << it->second.w << " " << endl;
                 }
                 cout << endl;
         }
+        cout << endl;
 }
 
 void dijkstrater(vector<vector<double>> graph, vector<int> &route, const int &holds, int start, int finish, double &weight) {
@@ -52,7 +55,10 @@ void dijkstrater(vector<vector<double>> graph, vector<int> &route, const int &ho
 
                 Node current = it->second;
 
-                if (visited[current.holdIndex]) continue;
+                if (visited[current.holdIndex]) {
+                        frontier.erase(it);
+                        continue;
+                }
 
                 visited[current.holdIndex] = true;
                 frontier.erase(it);
@@ -64,12 +70,11 @@ void dijkstrater(vector<vector<double>> graph, vector<int> &route, const int &ho
                         if (visited[i] || i == current.holdIndex) continue;
 
                         double edgeCost = graph[current.holdIndex][i];
-                        double betterDistance = dist[current.holdIndex] + edgeCost;
 
-                        if (betterDistance < dist[i]) {
-                                dist[i] =betterDistance;
+                        if (edgeCost < dist[i]) {
+                                dist[i] = edgeCost;
                                 prev[i] = current.holdIndex;
-                                frontier.insert({betterDistance, {betterDistance, i}});
+                                frontier.insert({edgeCost, {edgeCost, i}});
                         }
                 }
         }
@@ -81,6 +86,9 @@ void dijkstrater(vector<vector<double>> graph, vector<int> &route, const int &ho
                 tempFinish = prev[tempFinish];
         }
 
+        cout << route.size() << " " << start << " " << finish << endl << "\t";
+        for (size_t i = 0; i < route.size(); i++) cout << route[i] << " ";
+        cout << endl;
 
         //Reversing the path as it gets made backwards, and passing through the weight so it can sort the route to a V grade
         reverse(route.begin(), route.end());
@@ -125,15 +133,15 @@ vector<vector<double>> graphify(const map<pair<double, double>, Hold> &wall, int
         return graph;
 }
 
-void unscrew(vector<vector<double>> &graph, const vector<int> &route, int &holds) {
+void unscrew(vector<vector<double>> &graph, const vector<int> &route, map< pair<double, double>, Hold> &wall, const vector<pair<double, double>> &key, int &holds) {
 
         int x = route[route.size()/2];
         for (size_t i = 0; i < graph.size(); i++) {
                 graph[x][i] = DBL_MAX;
                 graph[i][x] = DBL_MAX;
         }
-        holds--;
 
+        holds--;
 }
 
 // Main Execution
@@ -158,20 +166,19 @@ int main(int argc, char* argv[]) {
         fin.close();
         holds = wall.size();
 
-        vector<pair<double, double>> key (holds);
+        vector<pair<double, double>> key;
         vector<vector<double>> graph = graphify(wall, holds, key);
 
         srand(time(0));
         int start = rand() % holds/5  + 4*holds/5;
         int finish = rand() % holds/5;
-
         while(holds > 2) {
 
-                vector<int> route;
+                        vector<int> route;
                 double weight = 0;
                 dijkstrater(graph, route, holds, start, finish, weight); //runs dijkstra to get routes
                 output(weight, route, wall, vGrade, key);
-                unscrew(graph, route, holds); //removes holds
+                unscrew(graph, route, wall, key, holds); //removes holds
 
         }
 
