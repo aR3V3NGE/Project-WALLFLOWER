@@ -24,18 +24,12 @@ struct Node { //nodes for dijkstras
 };
 
 void output(const double &weight, const vector<int> &route, const map<pair<double, double>, Hold>  &wall, const int &grade, const vector<pair<double, double>> &key) {
-
-        cout << "weight: " << weight << endl << "path: \n";
-
         if (grade*100 <= weight && weight <= grade*200+200) {
                 for (size_t i = 0; i < route.size(); i++) {
                         map<pair<double, double>, Hold>::const_iterator it = wall.find(key[route[i]]);
-
-                        cout << "\t" << it->first.first << " " << it->first.second << " " << it->second.h << " " << it->second.w << " " << endl;
+                        cout << it->first.first << " " << it->first.second << " " << it->second.h << " " << it->second.w;
                 }
-                cout << endl;
         }
-        cout << endl;
 }
 
 void dijkstrater(vector<vector<double>> graph, vector<int> &route, const int &holds, int start, int finish, double &weight) {
@@ -85,10 +79,6 @@ void dijkstrater(vector<vector<double>> graph, vector<int> &route, const int &ho
                 route.push_back(tempFinish);
                 tempFinish = prev[tempFinish];
         }
-
-        cout << route.size() << " " << start << " " << finish << endl << "\t";
-        for (size_t i = 0; i < route.size(); i++) cout << route[i] << " ";
-        cout << endl;
 
         //Reversing the path as it gets made backwards, and passing through the weight so it can sort the route to a V grade
         reverse(route.begin(), route.end());
@@ -174,7 +164,7 @@ int main(int argc, char* argv[]) {
         int finish = rand() % holds/5;
         while(holds > 2) {
 
-                        vector<int> route;
+                vector<int> route;
                 double weight = 0;
                 dijkstrater(graph, route, holds, start, finish, weight); //runs dijkstra to get routes
                 output(weight, route, wall, vGrade, key);
