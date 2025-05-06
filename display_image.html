@@ -1,8 +1,76 @@
 <html>
+   <head>
+      <style>
+         body {
+            text-align: center;
+            margin-top: 20px;
+            font-family: 'Times New Roman';
+            font-size: 70px;
+            color: Black;
+            text-shadow: 4px 4px 4px white;
+            background-image: url("https://images.metroparent.com/wp-content/uploads/2019/09/IMG_5552.jpg");
+            background-size: 100vw 100vh;
+         }
+
+         /* .credit is a custom class that sets the formatting for the text in the bottom left with our names on it. */
+         .credit {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            font-size: 18px;
+            color: black;
+            background-color: white;
+            padding: 5px 10px;
+            font-family: 'Times New Roman', Times, serif;
+         }
+
+         .tryAgain {
+            font-size: 50px;
+            padding: 10px;
+            background-color: white;
+            cursor: pointer;
+            color: black;
+            display: inline-block;
+         }
+
+         .justifyLeft {
+            display: inline-block;
+            text-align: left;
+            margin: 0;
+            padding: 5px;
+            background-color: white;
+         }
+
+         .justifyRight {
+            display: inline-block;
+            text-align: right;
+            margin: 0;
+            padding: 5px;
+            background-color: white;
+         }
+      </style>
+   </head>
+   
+   <h4 class="justifyLeft">Your Image:</h4>
+   <h4 class="justifyRight">Your {{ difficulty }} Route:</h4>
+   
    <body>
-      <h1>Your Set Wall:</h1>
-      <img src="{{ url_for('uploaded_file', filename=filename) }}" style="display: none;">
-      <img src="{{ url_for('uploaded_file', filename='holds_output.jpg') }}" alt="Uploaded Image">
-      <h1>{{ difficulty }} Route</h1>
+      <div>
+      <img src="{{ url_for('uploaded_file', filename=filename) }}" alt="Uploaded Image" class="justifyLeft">
+
+      <img src="{{ url_for('uploaded_file', filename='holds_output.jpg') }}" alt="Resulting Image" class="justifyRight">
+      </div>
+
+      <!-- This section adds a button to return to the start page. -->
+      <div>
+         <form action="{{ url_for('retry') }}" method="get">
+            <button type="submit" class="tryAgain">Try Again</button>
+         </form>
+      </div>
+
+      <!-- Our names and the project's purpose, set in the bottom left like a "copyright". -->
+      <div class="credit">
+         Final Project for Dr. S.J. Emrich's CS302 S25 by Drew Berard, Jubin Vijayakumar, Grant Jennings, & Justin Wiseman
+      </div>
    </body>
 </html>
