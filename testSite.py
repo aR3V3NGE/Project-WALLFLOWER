@@ -1,6 +1,7 @@
 from flask import Flask, redirect, url_for, request, render_template, send_from_directory
 from find_holds import main_function
 import os
+import shutil
 import threading
 
 app = Flask(__name__)
@@ -32,6 +33,11 @@ def display_image(filename):
     uploaded_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     main_function(uploaded_path, difficulty)
     return render_template('display_image.html', filename=filename, difficulty=difficulty)
+
+# Adds in the ability to retry the website and returns to home.
+@app.route('/retry', methods=['GET'])
+def retry():
+    return redirect(url_for('login'))
 
 @app.route('/static/uploads/<filename>')
 def uploaded_file(filename):
