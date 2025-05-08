@@ -1,6 +1,7 @@
 from flask import Flask, redirect, url_for, request, render_template, send_from_directory
-from find_holds import detect_holds
+from find_holds import main_function
 import os
+import shutil
 import threading
 
 app = Flask(__name__)
@@ -18,6 +19,9 @@ def upload():
         difficulty = request.form.get('Difficulty')
 
         if file.filename != '':
+            # Ensure the upload folder exists
+            os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
             file.save(filepath)
             return redirect(url_for('display_image', filename=file.filename, difficulty=difficulty))
@@ -27,13 +31,13 @@ def upload():
 def display_image(filename):
     difficulty = request.args.get('difficulty')
     uploaded_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    detect_holds(uploaded_path)
+    main_function(uploaded_path, difficulty)
     return render_template('display_image.html', filename=filename, difficulty=difficulty)
 
 @app.route('/static/uploads/<filename>')
 def uploaded_file(filename):
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    #output_path = os.path.join(app.config['UPLOAD_FOLDER'], 'holds_output.jpg')
+    output_path = os.path.join(app.config['UPLOAD_FOLDER'], 'holds_output.jpg')
     
     # Serve the file
     response = send_from_directory(app.config['UPLOAD_FOLDER'], filename)
