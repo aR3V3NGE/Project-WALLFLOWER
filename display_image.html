@@ -24,15 +24,6 @@
             font-family: 'Times New Roman', Times, serif;
          }
 
-         .tryAgain {
-            font-size: 50px;
-            padding: 10px;
-            background-color: white;
-            cursor: pointer;
-            color: black;
-            display: inline-block;
-         }
-
          .justifyLeft {
             display: inline-block;
             text-align: left;
@@ -48,24 +39,24 @@
             padding: 5px;
             background-color: white;
          }
+
+         .pictures {
+            display: inline-block;
+            text-align: center;
+            size: 500px 500px
+         }
       </style>
    </head>
    
-   <h4 class="justifyLeft">Your Image:</h4>
-   <h4 class="justifyRight">Your {{ difficulty }} Route:</h4>
+   <h5 class="justifyLeft">Your Image:</h5>
+   <h5 class="justifyRight">Your {{ difficulty }} Route:</h5>
    
    <body>
       <div>
-      <img src="{{ url_for('uploaded_file', filename=filename) }}" alt="Uploaded Image" class="justifyLeft">
+         <!-- Grabs the pictures from the backend and outputs them. -->
+      <img src="{{ url_for('uploaded_file', filename=filename) }}" alt="Uploaded Image" class="pictures">
 
-      <img src="{{ url_for('uploaded_file', filename='holds_output.jpg') }}" alt="Resulting Image" class="justifyRight">
-      </div>
-
-      <!-- This section adds a button to return to the start page. -->
-      <div>
-         <form action="{{ url_for('retry') }}" method="get">
-            <button type="submit" class="tryAgain">Try Again</button>
-         </form>
+      <img src="{{ url_for('uploaded_file', filename='holds_output.jpg') }}" alt="Resulting Image" class="pictures">
       </div>
 
       <!-- Our names and the project's purpose, set in the bottom left like a "copyright". -->

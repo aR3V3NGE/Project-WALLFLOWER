@@ -34,15 +34,10 @@ def display_image(filename):
     main_function(uploaded_path, difficulty)
     return render_template('display_image.html', filename=filename, difficulty=difficulty)
 
-# Adds in the ability to retry the website and returns to home.
-@app.route('/retry', methods=['GET'])
-def retry():
-    return redirect(url_for('login'))
-
 @app.route('/static/uploads/<filename>')
 def uploaded_file(filename):
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    #output_path = os.path.join(app.config['UPLOAD_FOLDER'], 'holds_output.jpg')
+    output_path = os.path.join(app.config['UPLOAD_FOLDER'], 'holds_output.jpg')
     
     # Serve the file
     response = send_from_directory(app.config['UPLOAD_FOLDER'], filename)
