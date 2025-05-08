@@ -7,3 +7,4 @@ Usage Steps:
 4. If you've done the previous steps correctly, it should open the website on a local address.
 5. Click upload image to upload image of a rock wall, pick a difficulty, then click find a route to run the program.
 6. Viola! You have a route picked out for you based on your image and difficulty!
+7. If you would like to retry, please just hit the back button on your browser.
