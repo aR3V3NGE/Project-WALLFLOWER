@@ -10,7 +10,7 @@ Usage for building:
 7. If you would like to retry, please just hit the back button on your browser.
 
 To run website:
-1. Download zip file
+1. Download website.zip file
 2. Uncompress
 3. Run testSite.py
 
