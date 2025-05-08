@@ -51,7 +51,7 @@ def uploaded_file(filename):
         except Exception as e:
             print(f"Error deleting file {file_to_delete}: {e}")
 
-    threading.Timer(10.0, delayed_delete, args=[filepath]).start()
+    #threading.Timer(60.0, delayed_delete, args=[filepath]).start()
 
     return response
 

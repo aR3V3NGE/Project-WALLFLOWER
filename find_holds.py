@@ -10,7 +10,7 @@ def detect_holds(image_path):
     image = cv2.imread(image_path)
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     
-    #applies blur (adjust for bigger or smaller for better detection)
+    #applies blur
     blurred = cv2.GaussianBlur(gray, (7, 7), 0)
     
     #finds countours using edges found using Canny Edge Detection
@@ -63,7 +63,7 @@ def detect_saturated_holds(image_path):
     cv2.waitKey(0)
     cv2.destroyAllWindows()
     
-    #applies blur (adjust for bigger or smaller for better detection)
+    #applies blur
     blurred = cv2.GaussianBlur(gray, (7, 7), 0)
     cv2.imshow("Blurred Image", blurred)
     cv2.waitKey(0)
@@ -97,15 +97,18 @@ def detect_saturated_holds(image_path):
     return holds
 
 #write holds to file for route maker file
-def write(holds):
+def write(holds, difficulty):
     with open("holds_list", "w") as file:
+        file.write(str(difficulty)[1] + "\n")
         for hold in holds:
             file.write(str(hold) + "\n")
 
 #dikjstrater
+#runs our pathfinding function
 def dikjstrater(holds):
     process = subprocess.Popen(['holds.exe', 'holds_list'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = process.communicate()
+    print(str(stderr))
     return list(map(int, stdout.decode().strip().split()))
 
 #output
@@ -150,9 +153,14 @@ def main_function(image_path, difficulty):
     #holds = user_input(holds)
 
     #writes to file
-    write(holds)
+    write(holds, difficulty)
 
-    #call route maker
-    numbers = dikjstrater(holds)
-
+    #call route maker until a valid output is found
+    while True:
+        numbers = dikjstrater(holds)
+        if len(numbers) == 1 and numbers[0] == -1:
+            print (str(-1))
+            break
+        if len(numbers) >= 12:
+            break
     output(image_path, numbers)
