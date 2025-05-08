@@ -23,7 +23,7 @@ struct Node { //nodes for Dijkstras
 
 bool output(const double &weight, const vector<int> &route, const map<pair<double, double>, Hold>  &wall, const int &grade, const vector<pair<double, double>> &key) {
         //outputs the path if the weight of the path and the inputted grades match
-        if ((grade*50) <= weight && weight <= (grade*50)+50 || (grade >= 10 && weight >= 500)) {
+        if ((grade*50 <= weight && weight <= (grade*50)+50) || (grade >= 10 && weight >= 500)) {
                 for (size_t i = 0; i < route.size(); i++) {
                         map<pair<double, double>, Hold>::const_iterator it = wall.find(key[route[i]]);
                         //turns the path of hold indexes into the hold information
