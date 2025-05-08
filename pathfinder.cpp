@@ -13,7 +13,7 @@
 using namespace std;
 
 struct Hold { //stores information about a given hold
-        int h, w, a;
+        double h, w, a;
 };
 
 struct Node { //nodes for Dijkstras
@@ -27,7 +27,7 @@ bool output(const double &weight, const vector<int> &route, const map<pair<doubl
                 for (size_t i = 0; i < route.size(); i++) {
                         map<pair<double, double>, Hold>::const_iterator it = wall.find(key[route[i]]);
                         //turns the path of hold indexes into the hold information
-                        cout << it->first.first << " " << it->first.second << " " << it->second.h << " " << it->second.w;
+                        cout << it->first.first << " " << it->first.second << " " << it->second.h << " " << it->second.w << " ";
                 }
                 return true; //true if route was found, false if not
         }
@@ -37,8 +37,8 @@ bool output(const double &weight, const vector<int> &route, const map<pair<doubl
 
 void dijkstrater(vector<vector<double>> graph, vector<int> &route, const int &holds, int start, int finish, double &weight) {
         //runs Dijkstra's algorithm to find routes
-        /* Dijsktra's algorithim runs over the indexes of the holds and their weights rather than the holds itself
-         * making it easier to code. The route is a series of indeces, and output is converted from index to hold and printed out
+        /* Dijsktra's algorithm runs over the indexes of the holds and their weights rather than the holds themselves
+         * making it easier to code. The route is a series of indices, and output is converted from index to hold and printed out
          */
         vector<bool> visited (holds, false); //stores visited holds
         vector<double> dist (holds, DBL_MAX); //stores weight of path
