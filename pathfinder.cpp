@@ -27,7 +27,7 @@ bool output(const double &weight, const vector<int> &route, const map<pair<doubl
                 for (size_t i = 0; i < route.size(); i++) {
                         map<pair<double, double>, Hold>::const_iterator it = wall.find(key[route[i]]);
                         //turns the path of hold indexes into the hold information
-                        cout << it->first.first << " " << it->first.second << " " << it->second.h << " " << it->second.w << " ";
+                        cout << it->first.first << " " << it->first.second << " " << it->second.w << " " << it->second.h << " ";
                 }
                 return true; //true if route was found, false if not
         }
@@ -151,7 +151,7 @@ int main(int argc, char* argv[]) {
         fin >> vGrade;
         double x, y, h, w, a;
 
-        while (fin >> x >> y >> h >> w >> a) {
+        while (fin >> x >> y >> w >> h >> a) {
                 wall[{x, y}].h = h;
                 wall[{x, y}].w = w;
                 wall[{x, y}].a = a;
